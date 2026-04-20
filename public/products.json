@@ -1,0 +1,75 @@
+{
+  "products": [
+    {
+      "_id": "692e90be4045baeca28c7815",
+      "name": "Mystery tee",
+      "description": "High quality mystery t-shirt with unique design",
+      "price": 12.5,
+      "discountPrice": null,
+      "category": "HOODIES",
+      "Brand": "stussy",
+      "productItem": {
+        "colors": [
+          {
+            "color": "red",
+            "imageUrl": "https://target-dash-board-xa1r.vercel.app/images/image40.webp",
+            "productItem": {
+              "images": [
+                "https://targetclothe.online/products/1764659389679-856926853-4.png",
+                "https://targetclothe.online/products/1764659408363-709039304-3.png"
+              ],
+              "sizes": [
+                {
+                  "size": "S",
+                  "quantity": 10
+                },
+                {
+                  "size": "M",
+                  "quantity": 50
+                },
+                {
+                  "size": "L",
+                  "quantity": 30
+                },
+                {
+                  "size": "XL",
+                  "quantity": 15
+                }
+              ]
+            }
+          },
+          {
+            "color": "blue",
+            "imageUrl": "https://targetclothe.online/products/1764659408363-709039304-3.png",
+            "productItem": {
+              "images": [
+                "https://targetclothe.online/products/1764659389679-856926853-4.png",
+                "https://targetclothe.online/products/1764659408363-709039304-3.png"
+              ],
+              "sizes": [
+                {
+                  "size": "S",
+                  "quantity": 10
+                },
+                {
+                  "size": "M",
+                  "quantity": 50
+                },
+                {
+                  "size": "L",
+                  "quantity": 30
+                },
+                {
+                  "size": "XL",
+                  "quantity": 15
+                }
+              ]
+            }
+          }
+        ]
+      },
+      "createdAt": "2025-12-02T07:09:50.602Z"
+    }
+  ]
+}
+
