@@ -1,0 +1,16 @@
+{
+  "version": 1,
+  "functions": {
+    "/dashboard/banner/options/category": {},
+    "/dashboard/banner/options/text": {},
+    "/dashboard/banner": {},
+    "/dashboard": {},
+    "/dashboard/orders": {},
+    "/signup": {},
+    "/dashboard/items": {},
+    "/": {},
+    "/dashboard/banner/options/item-brand": {},
+    "/dashboard/banner/options/top-items": {},
+    "/login": {}
+  }
+}

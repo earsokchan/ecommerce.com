@@ -1,0 +1,18 @@
+{
+  "headers": {
+    "x-nextjs-stale-time": "300",
+    "x-nextjs-prerender": "1",
+    "x-next-cache-tags": "_N_T_/layout,_N_T_/dashboard/layout,_N_T_/dashboard/banner/layout,_N_T_/dashboard/banner/options/layout,_N_T_/dashboard/banner/options/top-items/layout,_N_T_/dashboard/banner/options/top-items/page,_N_T_/dashboard/banner/options/top-items"
+  },
+  "segmentPaths": [
+    "/_tree",
+    "/_full",
+    "/dashboard/banner/options/top-items/__PAGE__",
+    "/dashboard/banner/options/top-items",
+    "/dashboard/banner/options",
+    "/dashboard/banner",
+    "/dashboard",
+    "/_index",
+    "/_head"
+  ]
+}

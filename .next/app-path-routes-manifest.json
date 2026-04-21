@@ -1,0 +1,16 @@
+{
+  "/_global-error/page": "/_global-error",
+  "/_not-found/page": "/_not-found",
+  "/dashboard/banner/options/category/page": "/dashboard/banner/options/category",
+  "/dashboard/banner/options/item-brand/page": "/dashboard/banner/options/item-brand",
+  "/dashboard/banner/options/text/page": "/dashboard/banner/options/text",
+  "/dashboard/banner/options/top-items/page": "/dashboard/banner/options/top-items",
+  "/dashboard/banner/page": "/dashboard/banner",
+  "/dashboard/items/page": "/dashboard/items",
+  "/dashboard/orders/page": "/dashboard/orders",
+  "/dashboard/page": "/dashboard",
+  "/favicon.ico/route": "/favicon.ico",
+  "/login/page": "/login",
+  "/page": "/",
+  "/signup/page": "/signup"
+}

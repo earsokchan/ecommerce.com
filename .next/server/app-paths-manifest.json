@@ -1,0 +1,16 @@
+{
+  "/_global-error/page": "app/_global-error/page.js",
+  "/_not-found/page": "app/_not-found/page.js",
+  "/dashboard/banner/options/category/page": "app/dashboard/banner/options/category/page.js",
+  "/dashboard/banner/options/item-brand/page": "app/dashboard/banner/options/item-brand/page.js",
+  "/dashboard/banner/options/text/page": "app/dashboard/banner/options/text/page.js",
+  "/dashboard/banner/options/top-items/page": "app/dashboard/banner/options/top-items/page.js",
+  "/dashboard/banner/page": "app/dashboard/banner/page.js",
+  "/dashboard/items/page": "app/dashboard/items/page.js",
+  "/dashboard/orders/page": "app/dashboard/orders/page.js",
+  "/dashboard/page": "app/dashboard/page.js",
+  "/favicon.ico/route": "app/favicon.ico/route.js",
+  "/login/page": "app/login/page.js",
+  "/page": "app/page.js",
+  "/signup/page": "app/signup/page.js"
+}

@@ -1,0 +1,94 @@
+module.exports = [
+"[project]/src/app/favicon.ico.mjs { IMAGE => \"[project]/src/app/favicon.ico (static in ecmascript, tag client)\" } [app-rsc] (structured image object, ecmascript, Next.js Server Component)", ((__turbopack_context__) => {
+
+__turbopack_context__.n(__turbopack_context__.i("[project]/src/app/favicon.ico.mjs { IMAGE => \"[project]/src/app/favicon.ico (static in ecmascript, tag client)\" } [app-rsc] (structured image object, ecmascript)"));
+}),
+"[externals]/next/dist/shared/lib/no-fallback-error.external.js [external] (next/dist/shared/lib/no-fallback-error.external.js, cjs)", ((__turbopack_context__, module, exports) => {
+
+const mod = __turbopack_context__.x("next/dist/shared/lib/no-fallback-error.external.js", () => require("next/dist/shared/lib/no-fallback-error.external.js"));
+
+module.exports = mod;
+}),
+"[project]/src/app/layout.tsx [app-rsc] (ecmascript, Next.js Server Component)", ((__turbopack_context__) => {
+
+__turbopack_context__.n(__turbopack_context__.i("[project]/src/app/layout.tsx [app-rsc] (ecmascript)"));
+}),
+"[project]/src/app/dashboard/DashboardClient.tsx [app-rsc] (ecmascript)", ((__turbopack_context__, module, exports) => {
+
+}),
+"[externals]/mongodb [external] (mongodb, cjs)", ((__turbopack_context__, module, exports) => {
+
+const mod = __turbopack_context__.x("mongodb", () => require("mongodb"));
+
+module.exports = mod;
+}),
+"[project]/src/app/database/config.ts [app-rsc] (ecmascript)", ((__turbopack_context__) => {
+"use strict";
+
+__turbopack_context__.s([
+    "databaseName",
+    ()=>databaseName,
+    "getDatabase",
+    ()=>getDatabase,
+    "mongoUri",
+    ()=>mongoUri
+]);
+var __TURBOPACK__imported__module__$5b$externals$5d2f$mongodb__$5b$external$5d$__$28$mongodb$2c$__cjs$29$__ = __turbopack_context__.i("[externals]/mongodb [external] (mongodb, cjs)");
+;
+const mongoUri = process.env.MONGODB_URI ?? "mongodb+srv://sokchanear0:2NtjcG3hRPMTrYCz@cluster0.1nfjw.mongodb.net/chat_db?retryWrites=true&w=majority&appName=Cluster0";
+const databaseName = "chat_db";
+const clientOptions = {};
+const client = new __TURBOPACK__imported__module__$5b$externals$5d2f$mongodb__$5b$external$5d$__$28$mongodb$2c$__cjs$29$__["MongoClient"](mongoUri, clientOptions);
+const clientPromise = globalThis._mongoClientPromise ?? client.connect().then((connectedClient)=>connectedClient);
+if ("TURBOPACK compile-time truthy", 1) {
+    globalThis._mongoClientPromise = clientPromise;
+}
+async function getDatabase() {
+    const connectedClient = await clientPromise;
+    return connectedClient.db(databaseName);
+}
+;
+}),
+"[project]/src/app/dashboard/page.tsx [app-rsc] (ecmascript)", ((__turbopack_context__) => {
+"use strict";
+
+__turbopack_context__.s([
+    "default",
+    ()=>DashboardPage
+]);
+var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/dist/server/route-modules/app-page/vendored/rsc/react-jsx-dev-runtime.js [app-rsc] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$app$2f$dashboard$2f$DashboardClient$2e$tsx__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/src/app/dashboard/DashboardClient.tsx [app-rsc] (ecmascript)");
+var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$app$2f$database$2f$config$2e$ts__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/src/app/database/config.ts [app-rsc] (ecmascript)");
+;
+;
+;
+function serializeInvoice(invoice) {
+    // Convert BSON-heavy MongoDB documents into plain JSON-safe data.
+    const plainInvoice = JSON.parse(JSON.stringify(invoice));
+    return {
+        ...plainInvoice,
+        _id: typeof plainInvoice._id === 'string' ? plainInvoice._id : String(plainInvoice._id),
+        date: plainInvoice.date ? new Date(plainInvoice.date).toISOString() : new Date().toISOString()
+    };
+}
+async function DashboardPage() {
+    const db = await (0, __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$app$2f$database$2f$config$2e$ts__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["getDatabase"])();
+    const invoices = await db.collection('invoices').find({}).sort({
+        date: -1
+    }).toArray();
+    return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$rsc$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$app$2f$dashboard$2f$DashboardClient$2e$tsx__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["default"], {
+        initialInvoices: invoices.map(serializeInvoice)
+    }, void 0, false, {
+        fileName: "[project]/src/app/dashboard/page.tsx",
+        lineNumber: 27,
+        columnNumber: 10
+    }, this);
+}
+}),
+"[project]/src/app/dashboard/page.tsx [app-rsc] (ecmascript, Next.js Server Component)", ((__turbopack_context__) => {
+
+__turbopack_context__.n(__turbopack_context__.i("[project]/src/app/dashboard/page.tsx [app-rsc] (ecmascript)"));
+}),
+];
+
+//# sourceMappingURL=%5Broot-of-the-server%5D__93929908._.js.map
