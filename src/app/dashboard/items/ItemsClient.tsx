@@ -19,6 +19,14 @@ import {
   CardHeader,
   CardTitle,
 } from "../../../components/ui/card";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "../../../components/ui/table";
 
 interface ProductPageProps {
   initialProducts: Product[];
@@ -65,16 +73,6 @@ export default function ProductPage({
   initialBrands,
 }: ProductPageProps) {
   const { t } = useLang();
-  const API_BASE_URL = "https://api.targetclothe.online";
-  const productApi = `${API_BASE_URL}/api/products`;
-
-  const TOKEN =
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Imhlbmdzb3Rob24iLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3NzU1NDA1OTEsImV4cCI6MTc3ODEzMjU5MX0.EbwnPvdaXHJC2RPreoGfHD1rF39UtElcgDQkC-ryoxo";
-
-  // Helper function to get headers with token
-  const getHeaders = () => ({
-    Authorization: `Bearer ${TOKEN}`,
-  });
 
   const [products, setProducts] = useState<Product[]>(initialProducts);
   const [loading] = useState(false);
@@ -186,21 +184,25 @@ export default function ProductPage({
         }
       });
 
-      const url = editProductId ? `${productApi}/${editProductId}` : productApi;
-      const method = editProductId ? "PUT" : "POST";
+      const parsedPrice = Number(productInfo.price);
+      const parsedDiscountPrice =
+        productInfo.discountPrice.trim() === ""
+          ? null
+          : Number(productInfo.discountPrice);
 
-      const response = await fetch(url, {
-        method,
-        body: formData,
-        headers: getHeaders(),
-      });
+      // TODO: Replace with database query (CREATE or UPDATE)
+      // Use server action or API route to save product with FormData
+      const baseProduct: Product = {
+        ...productInfo,
+        price: Number.isFinite(parsedPrice) ? parsedPrice : 0,
+        discountPrice: Number.isFinite(parsedDiscountPrice)
+          ? parsedDiscountPrice
+          : null,
+      };
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || "Failed to save product");
-      }
-      
-      const savedProduct = await response.json();
+      const savedProduct: Product = editProductId
+        ? { ...baseProduct, _id: editProductId }
+        : { ...baseProduct, _id: Date.now().toString() };
       
       if (editProductId) {
         setProducts((prev) =>
@@ -272,11 +274,8 @@ export default function ProductPage({
     if (!confirm(t("Are you sure you want to delete this product?"))) return;
     try {
       setError(null);
-      const response = await fetch(`${productApi}/${id}`, { 
-        method: "DELETE",
-        headers: getHeaders(),
-      });
-      if (!response.ok) throw new Error("Failed to delete product");
+      // TODO: Replace with database query (DELETE)
+      // Use server action or API route to delete product
       setProducts((prev) => prev.filter((p) => p._id !== id));
     } catch (err) {
       console.error("Error deleting product:", err);
@@ -353,23 +352,15 @@ export default function ProductPage({
       for (const update of updates) {
         if (!update) continue;
         
-        const response = await fetch(`${productApi}/${update.id}`, {
-          method: "PUT",
-          headers: {
-            ...getHeaders(),
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ discountPrice: update.discountPrice }),
-        });
-
-        if (!response.ok) {
-          throw new Error("Failed to update discount price");
+        // TODO: Replace with database query (UPDATE discount price)
+        // Use server action or API route to update product discount
+        const updatedProduct = products.find(p => p._id === update.id);
+        if (updatedProduct) {
+          updatedProduct.discountPrice = update.discountPrice;
+          setProducts((prev) =>
+            prev.map((p) => (p._id === update.id ? { ...updatedProduct } : p))
+          );
         }
-
-        const updatedProduct = await response.json();
-        setProducts((prev) =>
-          prev.map((p) => (p._id === update.id ? updatedProduct : p))
-        );
       }
 
       setSuccessMessage(t(`Applied ${bulkDiscountPercentage}% discount to ${selectedProductIds.size} product(s)`));
@@ -399,23 +390,9 @@ export default function ProductPage({
         const product = products.find((p) => p._id === productId);
         if (!product) continue;
 
-        // Remove discount price - set it to null
-        const response = await fetch(`${productApi}/${productId}`, {
-          method: "PUT",
-          headers: {
-            ...getHeaders(),
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            discountPrice: null,
-          }),
-        });
-
-        if (!response.ok) {
-          throw new Error("Failed to remove discount price");
-        }
-
-        const updatedProduct = await response.json();
+        // TODO: Replace with database query (UPDATE - remove discount)
+        // Use server action or API route to remove discount price
+        const updatedProduct = { ...product, discountPrice: null };
         setProducts((prev) =>
           prev.map((p) => (p._id === productId ? updatedProduct : p))
         );
@@ -660,7 +637,7 @@ export default function ProductPage({
 
   // Statistics
   const totalProducts = filteredProducts.length;
-  const totalValue = filteredProducts.reduce((sum, p) => sum + p.price, 0);
+  const totalValue = filteredProducts.reduce((sum, p) => sum + Number(p.price), 0);
   const discountedProducts = filteredProducts.filter((p) => p.discountPrice).length;
 
   function handleToggleStatus(arg0: string, status: string | undefined): void {
@@ -815,12 +792,12 @@ export default function ProductPage({
               <p className="text-gray-500 text-lg">{t("No products found")}</p>
             </div>
           ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead className="bg-gray-50 border-b-2 border-gray-200">
-                  <tr>
+            <div className="rounded-lg border bg-white">
+              <Table>
+                <TableHeader>
+                  <TableRow className="bg-gray-50 hover:bg-gray-50">
                     {/* SELECT ALL CHECKBOX */}
-                    <th className="px-4 py-3 text-center w-10">
+                    <TableHead className="w-10 text-center">
                       <input
                         type="checkbox"
                         checked={
@@ -831,32 +808,32 @@ export default function ProductPage({
                         className="w-4 h-4 cursor-pointer"
                         title={t("Select all")}
                       />
-                    </th>
+                    </TableHead>
 
-                    <th className="px-4 py-3 text-left font-semibold text-gray-700">{t("Image")}</th>
-                    <th className="px-4 py-3 text-left font-semibold text-gray-700">{t("Product Name")}</th>
-                    <th className="px-4 py-3 text-left font-semibold text-gray-700">{t("Brand")}</th>
-                    <th className="px-4 py-3 text-left font-semibold text-gray-700">{t("Category")}</th>
-                    <th className="px-4 py-3 text-right font-semibold text-gray-700">{t("Price")}</th>
-                    <th className="px-4 py-3 text-right font-semibold text-gray-700">{t("Discount")}</th>
-                    <th className="px-4 py-3 text-center font-semibold text-gray-700">{t("Colors")}</th>
-                    <th className="px-4 py-3 text-center font-semibold text-gray-700">{t("Sizes")}</th>
-                    <th className="px-4 py-3 text-center font-semibold text-gray-700">{t("Status")}</th>
-                    <th className="px-4 py-3 text-center font-semibold text-gray-700">{t("Actions")}</th>
-                  </tr>
-                </thead>
-                <tbody>
+                    <TableHead>{t("Image")}</TableHead>
+                    <TableHead>{t("Product Name")}</TableHead>
+                    <TableHead>{t("Brand")}</TableHead>
+                    <TableHead>{t("Category")}</TableHead>
+                    <TableHead className="text-right">{t("Price")}</TableHead>
+                    <TableHead className="text-right">{t("Discount")}</TableHead>
+                    <TableHead className="text-center">{t("Colors")}</TableHead>
+                    <TableHead className="text-center">{t("Sizes")}</TableHead>
+                    <TableHead className="text-center">{t("Status")}</TableHead>
+                    <TableHead className="text-center">{t("Actions")}</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
                   {filteredProducts.map((product) => (
-                    <tr
+                    <TableRow
                       key={product._id}
-                      className={`border-b border-gray-200 hover:bg-gray-50 transition ${
+                      className={`${
                         selectedProductIds.has(product._id || "")
                           ? "bg-blue-100"
                           : ""
                       }`}
                     >
                       {/* CHECKBOX */}
-                      <td className="px-4 py-3 text-center">
+                      <TableCell className="text-center">
                         <input
                           type="checkbox"
                           checked={selectedProductIds.has(product._id || "")}
@@ -865,10 +842,10 @@ export default function ProductPage({
                           }
                           className="w-4 h-4 cursor-pointer"
                         />
-                      </td>
+                      </TableCell>
 
                       {/* Image */}
-                      <td className="px-4 py-3">
+                      <TableCell>
                         {product.productItems?.[0]?.productimages?.[0] && (
                           <img
                             src={product.productItems[0].productimages[0]}
@@ -879,49 +856,49 @@ export default function ProductPage({
                             }}
                           />
                         )}
-                      </td>
+                      </TableCell>
 
                       {/* Product Name */}
-                      <td className="px-4 py-3">
+                      <TableCell>
                         <p className="font-medium text-gray-800 max-w-xs truncate">
                           {product.name}
                         </p>
                         <p className="text-xs text-gray-500">{product.description.slice(0, 40)}...</p>
-                      </td>
+                      </TableCell>
 
                       {/* Brand */}
-                      <td className="px-4 py-3 text-gray-700">{product.brand}</td>
+                      <TableCell>{product.brand}</TableCell>
 
                       {/* Category */}
-                      <td className="px-4 py-3">
+                      <TableCell>
                         <span className="inline-block bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-xs font-medium">
                           {product.category}
                         </span>
-                      </td>
+                      </TableCell>
 
                       {/* Price */}
-                      <td className="px-4 py-3 text-right">
+                      <TableCell className="text-right">
                         <p className="font-bold text-gray-900">${product.price}</p>
-                      </td>
+                      </TableCell>
 
                       {/* Discount Price */}
-                      <td className="px-4 py-3 text-right">
+                      <TableCell className="text-right">
                         {product.discountPrice ? (
                           <span className="text-green-600 font-medium">${product.discountPrice}</span>
                         ) : (
                           <span className="text-gray-400">-</span>
                         )}
-                      </td>
+                      </TableCell>
 
                       {/* Colors Count */}
-                      <td className="px-4 py-3 text-center">
+                      <TableCell className="text-center">
                         <span className="inline-flex items-center justify-center w-8 h-8 bg-purple-100 text-purple-800 rounded-full text-sm font-semibold">
                           {product.productItems?.length || 0}
                         </span>
-                      </td>
+                      </TableCell>
 
                       {/* Sizes Display - Grouped by Color */}
-                      <td className="px-4 py-3 text-center">
+                      <TableCell className="text-center">
                         {product.productItems && product.productItems.length > 0 ? (
                           <div className="space-y-2">
                             {product.productItems.map((colorItem, colorIdx) => (
@@ -953,10 +930,10 @@ export default function ProductPage({
                         ) : (
                           <span className="text-gray-400">-</span>
                         )}
-                      </td>
+                      </TableCell>
 
                       {/* Status Badge */}
-                      <td className="px-4 py-3 text-center">
+                      <TableCell className="text-center">
                         <span
                           className={`inline-flex items-center justify-center px-3 py-1 rounded-full text-xs font-semibold cursor-pointer transition ${
                             product.status === "active"
@@ -968,10 +945,10 @@ export default function ProductPage({
                         >
                           {product.status === "active" ? t("Active") : t("Disabled")}
                         </span>
-                      </td>
+                      </TableCell>
 
                       {/* Actions */}
-                      <td className="px-4 py-3 text-center">
+                      <TableCell className="text-center">
                         <div className="flex justify-center gap-2">
                           <button
                             onClick={() => handleViewDetails(product)}
@@ -995,11 +972,11 @@ export default function ProductPage({
                             🗑️
                           </button>
                         </div>
-                      </td>
-                    </tr>
+                      </TableCell>
+                    </TableRow>
                   ))}
-                </tbody>
-              </table>
+                </TableBody>
+              </Table>
             </div>
           )}
         </div>
@@ -1625,7 +1602,7 @@ export default function ProductPage({
                       </p>
                       <p className="text-gray-700">
                         <span className="font-semibold">{t("Created")}:</span>{" "}
-                        {new Date(selectedProduct.createdAt || "").toLocaleDateString()}
+                        {new Date(selectedProduct.createdAt || "").toLocaleDateString('en-US')}
                       </p>
                     </div>
 

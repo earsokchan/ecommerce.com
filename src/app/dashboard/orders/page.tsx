@@ -37,6 +37,14 @@ import {
 import Sidebar from '@/components/sidebar';
 import { CreditCard } from 'lucide-react';
 import { toast } from 'sonner';
+import {
+  createInvoice,
+  deleteInvoice,
+  type Invoice as DbInvoice,
+  listInvoices,
+  listPendingInvoices,
+  updateInvoice,
+} from './actions';
 
 // ⭐ Import the invoice preview component
 import { InvoicePreview } from './invoices';
@@ -51,7 +59,7 @@ type InvoiceItem = {
   color: string;
 };
 
-type Invoice = {
+type Invoice = DbInvoice & {
   _id: string;
   name: string;
   province: string;
@@ -124,7 +132,6 @@ export default function Payments() {
 
   const TOKEN =
     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Imhlbmdzb3Rob24iLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3NzU1NDA1OTEsImV4cCI6MTc3ODEzMjU5MX0.EbwnPvdaXHJC2RPreoGfHD1rF39UtElcgDQkC-ryoxo';
-  const API_BASE_URL = 'https://api.targetclothe.online';
 
 
   const [formData, setFormData] = useState({
@@ -154,12 +161,8 @@ export default function Payments() {
   // ------------------ FETCH INVOICES ---------------------------
   const fetchInvoices = async () => {
     try {
-      const res = await axios.get(`${API_BASE_URL}/api/invoices`, {
-        headers: {
-          Authorization: `Bearer ${TOKEN}`,
-        },
-      });
-      setInvoices(res.data);
+      const data = await listInvoices();
+      setInvoices(data);
     } catch (err) {
       console.error('Error fetching invoices:', err);
       toast.error(t('Failed to fetch invoices'));
@@ -169,12 +172,8 @@ export default function Payments() {
   // ⭐ Fetch pending invoices
   const fetchPendingInvoices = async () => {
     try {
-      const res = await axios.get(`${API_BASE_URL}/padding`, {
-        headers: {
-          Authorization: `Bearer ${TOKEN}`,
-        },
-      });
-      setPendingInvoices(res.data);
+      const data = await listPendingInvoices();
+      setPendingInvoices(data);
       setCurrentView('pending');
     } catch (err) {
       console.error('Error fetching pending invoices:', err);
@@ -199,27 +198,11 @@ export default function Payments() {
       };
 
       if (editingInvoiceId) {
-        await axios.put(
-          `${API_BASE_URL}/api/invoices/${editingInvoiceId}`,
-          {
-            headers: {
-              Authorization: `Bearer ${TOKEN}`,
-            },
-          },
-          // payload
-        );
+        await updateInvoice(editingInvoiceId, payload);
         toast.success(t('Invoice updated successfully'));
         setEditingInvoiceId(null);
       } else {
-        await axios.post(
-          `${API_BASE_URL}/api/invoices`,
-          {
-            headers: {
-              Authorization: `Bearer ${TOKEN}`,
-            },
-          },
-          // payload
-        );
+        await createInvoice(payload);
         toast.success(t('Invoice created successfully'));
       }
 
@@ -257,14 +240,9 @@ export default function Payments() {
   const handleDelete = async (id: string) => {
     if (!confirm(t('Are you sure you want to delete this invoice?'))) return;
     try {
-      await axios.delete(
-        `https://api.targetclothe.online/api/invoices/${id}`,{
-          headers: {
-            Authorization: `Bearer ${TOKEN}`,
-          },
-        }
-      );
+      await deleteInvoice(id);
       setInvoices(invoices.filter((inv) => inv._id !== id));
+      setPendingInvoices(pendingInvoices.filter((inv) => inv._id !== id));
       toast.success(t('Invoice deleted successfully'));
     } catch (err) {
       console.error('Error deleting invoice:', err);
